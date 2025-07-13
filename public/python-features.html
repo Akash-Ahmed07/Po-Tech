@@ -497,9 +497,90 @@
         // Create sine wave animation
         async function createSineWave() {
             try {
-                showAnimationStatus('Creating sine wave animation...', 'info');
+                showAnimationStatus('Creating smooth sine wave animation...', 'info');
 
                 const response = await fetch(`${API_BASE}/animations/create-sine-wave`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAnimationResult(result);
+                    loadDashboard();
+                    loadUserFiles();
+                } else {
+                    showAnimationStatus(result.error || 'Animation creation failed', 'error');
+                }
+            } catch (error) {
+                showAnimationStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Create spiral animation
+        async function createSpiral() {
+            try {
+                showAnimationStatus('Creating smooth spiral animation...', 'info');
+
+                const response = await fetch(`${API_BASE}/animations/create-spiral`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAnimationResult(result);
+                    loadDashboard();
+                    loadUserFiles();
+                } else {
+                    showAnimationStatus(result.error || 'Animation creation failed', 'error');
+                }
+            } catch (error) {
+                showAnimationStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Create wave interference animation
+        async function createInterference() {
+            try {
+                showAnimationStatus('Creating wave interference animation...', 'info');
+
+                const response = await fetch(`${API_BASE}/animations/create-interference`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAnimationResult(result);
+                    loadDashboard();
+                    loadUserFiles();
+                } else {
+                    showAnimationStatus(result.error || 'Animation creation failed', 'error');
+                }
+            } catch (error) {
+                showAnimationStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Create particle system animation
+        async function createParticles() {
+            try {
+                showAnimationStatus('Creating particle system animation...', 'info');
+
+                const response = await fetch(`${API_BASE}/animations/create-particles`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,

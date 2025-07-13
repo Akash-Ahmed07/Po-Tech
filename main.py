@@ -84,23 +84,132 @@ class Animation(db.Model):
 class AnimationCreator:
     @staticmethod
     def create_sine_wave_animation():
-        fig, ax = plt.subplots(figsize=(10, 6))
-        x = np.linspace(0, 2*np.pi, 100)
-        line, = ax.plot([], [], 'b-', linewidth=2)
-        ax.set_xlim(0, 2*np.pi)
-        ax.set_ylim(-1.5, 1.5)
-        ax.set_title('Sine Wave Animation', fontsize=16)
+        fig, ax = plt.subplots(figsize=(12, 8))
+        x = np.linspace(0, 4*np.pi, 200)
+        line, = ax.plot([], [], 'b-', linewidth=3)
+        ax.set_xlim(0, 4*np.pi)
+        ax.set_ylim(-2, 2)
+        ax.set_title('Smooth Sine Wave Animation', fontsize=18, fontweight='bold')
         ax.grid(True, alpha=0.3)
+        ax.set_facecolor('#f8f9fa')
         
         def animate(frame):
-            y = np.sin(x + frame/10)
+            # Smooth phase shift for fluid motion
+            phase = frame * 0.15
+            y = np.sin(x + phase) * np.exp(-0.1 * np.abs(x - 2*np.pi))
+            line.set_data(x, y)
+            return line,
+        
+        anim = animation.FuncAnimation(fig, animate, frames=300, interval=33, blit=True)
+        filename = f"sine_wave_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=30)
+        plt.close()
+        return filename
+
+    @staticmethod
+    def create_spiral_animation():
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax.set_xlim(-5, 5)
+        ax.set_ylim(-5, 5)
+        ax.set_title('Smooth Spiral Animation', fontsize=18, fontweight='bold')
+        ax.set_aspect('equal')
+        ax.set_facecolor('#f0f0f0')
+        
+        line, = ax.plot([], [], 'r-', linewidth=2)
+        
+        def animate(frame):
+            t = np.linspace(0, 4*np.pi, 200)
+            r = np.linspace(0.1, 4, 200)
+            
+            # Smooth rotation
+            rotation = frame * 0.1
+            x = r * np.cos(t + rotation)
+            y = r * np.sin(t + rotation)
+            
             line.set_data(x, y)
             return line,
         
         anim = animation.FuncAnimation(fig, animate, frames=200, interval=50, blit=True)
-        filename = f"sine_wave_{uuid.uuid4().hex[:8]}.gif"
+        filename = f"spiral_{uuid.uuid4().hex[:8]}.gif"
         filepath = os.path.join(ANIMATION_FOLDER, filename)
         anim.save(filepath, writer='pillow', fps=20)
+        plt.close()
+        return filename
+
+    @staticmethod
+    def create_wave_interference():
+        fig, ax = plt.subplots(figsize=(12, 8))
+        x = np.linspace(0, 4*np.pi, 300)
+        line1, = ax.plot([], [], 'b-', linewidth=2, alpha=0.7, label='Wave 1')
+        line2, = ax.plot([], [], 'r-', linewidth=2, alpha=0.7, label='Wave 2')
+        line3, = ax.plot([], [], 'g-', linewidth=3, label='Interference')
+        
+        ax.set_xlim(0, 4*np.pi)
+        ax.set_ylim(-3, 3)
+        ax.set_title('Wave Interference Animation', fontsize=18, fontweight='bold')
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+        ax.set_facecolor('#f8f9fa')
+        
+        def animate(frame):
+            phase = frame * 0.2
+            wave1 = np.sin(x + phase)
+            wave2 = np.sin(2*x - phase)
+            interference = wave1 + wave2
+            
+            line1.set_data(x, wave1)
+            line2.set_data(x, wave2)
+            line3.set_data(x, interference)
+            return line1, line2, line3
+        
+        anim = animation.FuncAnimation(fig, animate, frames=200, interval=50, blit=True)
+        filename = f"interference_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=20)
+        plt.close()
+        return filename
+
+    @staticmethod
+    def create_particle_system():
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax.set_xlim(0, 10)
+        ax.set_ylim(0, 8)
+        ax.set_title('Particle System Animation', fontsize=18, fontweight='bold')
+        ax.set_facecolor('#000011')
+        
+        # Create particles
+        num_particles = 50
+        particles = np.random.rand(num_particles, 2) * [10, 8]
+        velocities = (np.random.rand(num_particles, 2) - 0.5) * 0.5
+        colors = np.random.rand(num_particles)
+        
+        scat = ax.scatter(particles[:, 0], particles[:, 1], 
+                         s=50, c=colors, cmap='plasma', alpha=0.7)
+        
+        def animate(frame):
+            nonlocal particles, velocities
+            
+            # Update particle positions
+            particles += velocities
+            
+            # Bounce off walls
+            particles[:, 0] = np.where(particles[:, 0] < 0, -particles[:, 0], particles[:, 0])
+            particles[:, 0] = np.where(particles[:, 0] > 10, 20 - particles[:, 0], particles[:, 0])
+            particles[:, 1] = np.where(particles[:, 1] < 0, -particles[:, 1], particles[:, 1])
+            particles[:, 1] = np.where(particles[:, 1] > 8, 16 - particles[:, 1], particles[:, 1])
+            
+            # Update velocities for smooth motion
+            velocities += (np.random.rand(num_particles, 2) - 0.5) * 0.02
+            velocities *= 0.99  # Damping
+            
+            scat.set_offsets(particles)
+            return scat,
+        
+        anim = animation.FuncAnimation(fig, animate, frames=300, interval=33, blit=True)
+        filename = f"particles_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=30)
         plt.close()
         return filename
     
@@ -729,6 +838,84 @@ def create_morphing_animation():
         
         return jsonify({
             'message': 'Morphing animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-spiral', methods=['POST'])
+@jwt_required()
+def create_spiral_animation():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_spiral_animation()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="Smooth Spiral Animation",
+            animation_type="spiral",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Spiral animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-interference', methods=['POST'])
+@jwt_required()
+def create_interference_animation():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_wave_interference()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="Wave Interference Animation",
+            animation_type="interference",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Wave interference animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-particles', methods=['POST'])
+@jwt_required()
+def create_particle_animation():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_particle_system()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="Particle System Animation",
+            animation_type="particles",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Particle system animation created',
             'animation_id': animation.id,
             'filename': filename,
             'url': f'/api/animations/view/{animation.id}'
