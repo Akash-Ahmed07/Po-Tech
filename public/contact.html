@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Grow Easy</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Grow Easy</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="blog.html" class="nav-link">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a href="books.html" class="nav-link">Books</a>
+                </li>
+                <li class="nav-item">
+                    <a href="study.html" class="nav-link">Study</a>
+                </li>
+                <li class="nav-item">
+                    <a href="about.html" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="login.html" class="nav-link login-btn">Login</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p>Get in touch with us for any questions or support</p>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="content-section">
+        <div class="container">
+            <div class="grid grid-2">
+                <div>
+                    <h2>Get In Touch</h2>
+                    <p>We'd love to hear from you! Whether you have questions about our platform, need technical support, or want to contribute content, we're here to help.</p>
+                    
+                    <div class="contact-info" style="margin: 2rem 0;">
+                        <div class="contact-item" style="display: flex; align-items: center; margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+                            <div class="contact-icon" style="width: 50px; height: 50px; background: #4a90e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem; color: white;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4>Email</h4>
+                                <p><a href="mailto:groweasy25@gmail.com" style="color: #4a90e2; text-decoration: none;">groweasy25@gmail.com</a></p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item" style="display: flex; align-items: center; margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+                            <div class="contact-icon" style="width: 50px; height: 50px; background: #4a90e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem; color: white;">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div>
+                                <h4>Website</h4>
+                                <p>www.groweasy.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item" style="display: flex; align-items: center; margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+                            <div class="contact-icon" style="width: 50px; height: 50px; background: #4a90e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem; color: white;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4>Response Time</h4>
+                                <p>Within 24 hours</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="social-section">
+                        <h3>Follow Us</h3>
+                        <div class="social-links" style="margin: 1rem 0;">
+                            <a href="https://www.facebook.com/share/16CSnvUxkf/?mibextid=wwXIfr" target="_blank" style="margin-right: 1rem;">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://youtube.com/@akash_ay?si=swJ6B5SsO0NtG_4y" target="_blank" style="margin-right: 1rem;">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="https://www.instagram.com/akash.ay_?igsh=ZXpsMDc4ZGthdzBz" target="_blank" style="margin-right: 1rem;">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://x.com/akash_ay_?s=21" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="form-container">
+                        <h3>Send us a Message</h3>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="name">Full Name *</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subject">Subject *</label>
+                                <select id="subject" name="subject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="content">Content Contribution</option>
+                                    <option value="partnership">Partnership</option>
+                                    <option value="feedback">Feedback</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Message *</label>
+                                <textarea id="message" name="message" rows="5" required placeholder="Please describe your inquiry in detail..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn-submit">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="content-section" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container" style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item" style="margin-bottom: 1rem;">
+                    <div class="faq-question" style="background: white; padding: 1.5rem; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="toggleFAQ(this)">
+                        <h4>How can I access the free books and courses?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="display: none; padding: 1.5rem; background: white; margin-top: 0.5rem; border-radius: 10px;">
+                        <p>All our books and courses are completely free! Simply browse to the Books or Study sections and start learning immediately. No registration required for basic access.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" style="margin-bottom: 1rem;">
+                    <div class="faq-question" style="background: white; padding: 1.5rem; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="toggleFAQ(this)">
+                        <h4>Can I contribute content to the platform?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="display: none; padding: 1.5rem; background: white; margin-top: 0.5rem; border-radius: 10px;">
+                        <p>Yes! You can write and publish blogs on our platform. For contributing books or study materials, please contact us through the form above.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" style="margin-bottom: 1rem;">
+                    <div class="faq-question" style="background: white; padding: 1.5rem; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="toggleFAQ(this)">
+                        <h4>Is the platform available on mobile devices?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="display: none; padding: 1.5rem; background: white; margin-top: 0.5rem; border-radius: 10px;">
+                        <p>Absolutely! Our platform is fully responsive and works seamlessly on laptops, tablets, and smartphones.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" style="margin-bottom: 1rem;">
+                    <div class="faq-question" style="background: white; padding: 1.5rem; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="toggleFAQ(this)">
+                        <h4>How often is new content added?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="display: none; padding: 1.5rem; background: white; margin-top: 0.5rem; border-radius: 10px;">
+                        <p>We continuously add new content based on user feedback and curriculum updates. New blogs are published regularly by our community members.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Grow Easy</h3>
+                    <p>Empowering education through free and accessible learning resources.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/share/16CSnvUxkf/?mibextid=wwXIfr" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://youtube.com/@akash_ay?si=swJ6B5SsO0NtG_4y" target="_blank">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://www.instagram.com/akash.ay_?igsh=ZXpsMDc4ZGthdzBz" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://x.com/akash_ay_?s=21" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="books.html">Books</a></li>
+                        <li><a href="study.html">Study Materials</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> groweasy25@gmail.com</p>
+                    <p><i class="fas fa-globe"></i> www.groweasy.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Grow Easy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = form.querySelector('.btn-submit');
+            const originalText = showLoading(submitBtn);
+            
+            if (!validateForm(form)) {
+                hideLoading(submitBtn, originalText);
+                showAlert('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await apiCall('/api/contact', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.success) {
+                    showAlert('Message sent successfully! We\'ll get back to you soon.', 'success');
+                    form.reset();
+                } else {
+                    showAlert('Failed to send message. Please try again.', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to send message. Please try again.', 'error');
+            } finally {
+                hideLoading(submitBtn, originalText);
+            }
+        });
+        
+        // FAQ toggle functionality
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('i');
+            
+            if (answer.style.display === 'none' || answer.style.display === '') {
+                answer.style.display = 'block';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                answer.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+    </script>
+</body>
+</html>
