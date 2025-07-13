@@ -22,8 +22,8 @@ from email.mime.text import MimeText
 from email.mime.multipart import MimeMultipart
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'grow-easy-python-secret-key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///grow_easy.db'
+app.config['SECRET_KEY'] = 'po-tech-python-secret-key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///po_tech.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
@@ -180,7 +180,7 @@ class AnimationCreator:
 @app.route('/')
 def home():
     return jsonify({
-        "message": "Grow Easy Python Backend API",
+        "message": "Po-Tech Python Backend API",
         "version": "1.0.0",
         "features": ["PDF Upload", "Animations", "User Management"],
         "endpoints": {
@@ -414,7 +414,7 @@ def create_banner():
         user_id = get_jwt_identity()
         data = request.get_json()
         title = data.get('title', 'Educational Banner')
-        subtitle = data.get('subtitle', 'Learn and Grow with Grow Easy')
+        subtitle = data.get('subtitle', 'Learn and Grow with Po-Tech')
         
         filename = AnimationCreator.create_educational_banner(title, subtitle)
         

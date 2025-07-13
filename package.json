@@ -1,6 +1,6 @@
 
 {
-  "name": "grow-easy-website",
+  "name": "po-tech-website",
   "version": "1.0.0",
   "description": "Dynamic educational website with books, courses, and blog features",
   "main": "server.js",

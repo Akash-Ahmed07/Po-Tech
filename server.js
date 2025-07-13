@@ -23,7 +23,7 @@ app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
 app.use(session({
-  secret: 'grow-easy-secret-key',
+  secret: 'po-tech-secret-key',
   resave: false,
   saveUninitialized: false
 }));
@@ -36,7 +36,7 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'grow_easy'
+  database: process.env.DB_NAME || 'po_tech'
 });
 
 // Create database tables
@@ -202,7 +202,7 @@ app.post('/api/register', async (req, res) => {
     const mailOptions = {
       from: 'groweasy25@gmail.com',
       to: email,
-      subject: 'Verify Your Email - Grow Easy',
+      subject: 'Verify Your Email - Po-Tech',
       html: `<p>Click <a href="http://localhost:${PORT}/verify/${verificationToken}">here</a> to verify your email.</p>`
     };
 

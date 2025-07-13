@@ -16,7 +16,7 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "Python Server"
+runButton = "Po-Tech Server"
 
 [[workflows.workflow]]
 name = "Start Server"
@@ -29,6 +29,15 @@ args = "node server.js"
 
 [[workflows.workflow]]
 name = "Python Server"
+author = 44938857
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+
+[[workflows.workflow]]
+name = "Po-Tech Server"
 author = 44938857
 mode = "sequential"
 
