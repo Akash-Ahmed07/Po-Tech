@@ -175,6 +175,186 @@ class AnimationCreator:
         filepath = os.path.join(ANIMATION_FOLDER, filename)
         img.save(filepath, quality=95)
         return filename
+    
+    @staticmethod
+    def create_smooth_wave_animation():
+        """Create smooth multi-wave animation with easing"""
+        fig, ax = plt.subplots(figsize=(12, 8))
+        x = np.linspace(0, 4*np.pi, 200)
+        
+        # Initialize multiple wave lines
+        line1, = ax.plot([], [], 'b-', linewidth=3, label='Primary Wave', alpha=0.8)
+        line2, = ax.plot([], [], 'r-', linewidth=2, label='Harmonic', alpha=0.7)
+        line3, = ax.plot([], [], 'g-', linewidth=2, label='Phase Wave', alpha=0.6)
+        
+        ax.set_xlim(0, 4*np.pi)
+        ax.set_ylim(-3, 3)
+        ax.set_title('Smooth Multi-Wave Animation', fontsize=18, fontweight='bold')
+        ax.set_xlabel('X (radians)', fontsize=14)
+        ax.set_ylabel('Amplitude', fontsize=14)
+        ax.grid(True, alpha=0.3)
+        ax.legend(loc='upper right')
+        
+        # Add background gradient
+        ax.set_facecolor('#f8f9fa')
+        
+        def animate(frame):
+            # Smooth easing function
+            t = frame / 100.0
+            easing = 0.5 * (1 - np.cos(np.pi * (t % 1)))
+            
+            # Multiple wave equations with phase shifts
+            y1 = np.sin(x + t * 2) * (1 + 0.3 * easing)
+            y2 = 0.7 * np.sin(2*x + t * 3) * (1 + 0.2 * easing)
+            y3 = 0.5 * np.sin(0.5*x - t * 1.5) * (1 + 0.4 * easing)
+            
+            line1.set_data(x, y1)
+            line2.set_data(x, y2)
+            line3.set_data(x, y3)
+            
+            return line1, line2, line3
+        
+        anim = animation.FuncAnimation(fig, animate, frames=300, interval=50, blit=True, repeat=True)
+        filename = f"smooth_wave_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=24)
+        plt.close()
+        return filename
+    
+    @staticmethod
+    def create_particle_system():
+        """Create animated particle system"""
+        fig, ax = plt.subplots(figsize=(10, 10))
+        
+        # Initialize particles
+        n_particles = 50
+        particles = np.random.rand(n_particles, 2) * 10
+        velocities = (np.random.rand(n_particles, 2) - 0.5) * 0.5
+        colors = np.random.rand(n_particles)
+        sizes = np.random.rand(n_particles) * 100 + 50
+        
+        scat = ax.scatter(particles[:, 0], particles[:, 1], c=colors, s=sizes, 
+                         alpha=0.7, cmap='viridis')
+        
+        ax.set_xlim(0, 10)
+        ax.set_ylim(0, 10)
+        ax.set_title('Particle System Animation', fontsize=16, fontweight='bold')
+        ax.set_facecolor('#1a1a1a')
+        
+        def animate(frame):
+            nonlocal particles, velocities
+            
+            # Update particle positions
+            particles += velocities
+            
+            # Bounce off walls
+            for i in range(n_particles):
+                if particles[i, 0] <= 0 or particles[i, 0] >= 10:
+                    velocities[i, 0] *= -0.9
+                    particles[i, 0] = np.clip(particles[i, 0], 0, 10)
+                if particles[i, 1] <= 0 or particles[i, 1] >= 10:
+                    velocities[i, 1] *= -0.9
+                    particles[i, 1] = np.clip(particles[i, 1], 0, 10)
+            
+            # Update scatter plot
+            scat.set_offsets(particles)
+            
+            # Add slight rotation to colors
+            new_colors = (colors + frame * 0.01) % 1
+            scat.set_array(new_colors)
+            
+            return scat,
+        
+        anim = animation.FuncAnimation(fig, animate, frames=400, interval=40, blit=True)
+        filename = f"particles_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=25)
+        plt.close()
+        return filename
+    
+    @staticmethod
+    def create_3d_rotation():
+        """Create smooth 3D rotation animation"""
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection='3d')
+        
+        # Create 3D data
+        u = np.linspace(0, 2 * np.pi, 50)
+        v = np.linspace(0, np.pi, 50)
+        x = np.outer(np.cos(u), np.sin(v))
+        y = np.outer(np.sin(u), np.sin(v))
+        z = np.outer(np.ones(np.size(u)), np.cos(v))
+        
+        def animate(frame):
+            ax.clear()
+            
+            # Smooth rotation
+            elevation = 20 + 15 * np.sin(frame * 0.05)
+            azimuth = frame * 2
+            
+            ax.plot_surface(x, y, z, alpha=0.8, cmap='plasma')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+            ax.set_zlabel('Z')
+            ax.set_title('3D Sphere Rotation', fontsize=14, fontweight='bold')
+            ax.view_init(elev=elevation, azim=azimuth)
+            
+            # Set consistent limits
+            ax.set_xlim([-1, 1])
+            ax.set_ylim([-1, 1])
+            ax.set_zlim([-1, 1])
+        
+        anim = animation.FuncAnimation(fig, animate, frames=180, interval=80)
+        filename = f"3d_rotation_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=15)
+        plt.close()
+        return filename
+    
+    @staticmethod
+    def create_morphing_shapes():
+        """Create smooth morphing geometric shapes"""
+        fig, ax = plt.subplots(figsize=(10, 10))
+        
+        def animate(frame):
+            ax.clear()
+            
+            # Parameters for morphing
+            t = frame / 100.0
+            n_points = 100
+            theta = np.linspace(0, 2*np.pi, n_points)
+            
+            # Morph between circle, square, and triangle
+            circle_r = 1
+            square_factor = 0.3 * (1 + np.sin(t * 2))
+            triangle_factor = 0.3 * (1 + np.cos(t * 3))
+            
+            # Create morphing radius
+            r = circle_r + square_factor * np.abs(np.sin(4 * theta)) + \
+                triangle_factor * np.abs(np.sin(3 * theta))
+            
+            x = r * np.cos(theta)
+            y = r * np.sin(theta)
+            
+            # Create gradient fill
+            colors = plt.cm.rainbow(np.linspace(0, 1, n_points))
+            
+            ax.fill(x, y, alpha=0.7, color=colors[int(t * 20) % len(colors)])
+            ax.plot(x, y, 'k-', linewidth=3)
+            
+            ax.set_xlim(-2, 2)
+            ax.set_ylim(-2, 2)
+            ax.set_aspect('equal')
+            ax.set_title('Morphing Geometric Shapes', fontsize=16, fontweight='bold')
+            ax.set_facecolor('#f0f0f0')
+            ax.grid(True, alpha=0.3)
+        
+        anim = animation.FuncAnimation(fig, animate, frames=200, interval=75)
+        filename = f"morphing_{uuid.uuid4().hex[:8]}.gif"
+        filepath = os.path.join(ANIMATION_FOLDER, filename)
+        anim.save(filepath, writer='pillow', fps=20)
+        plt.close()
+        return filename
 
 # Routes
 @app.route('/')
@@ -449,6 +629,110 @@ def view_animation(animation_id):
         db.session.commit()
         
         return send_file(animation.file_path)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-smooth-wave', methods=['POST'])
+@jwt_required()
+def create_smooth_wave():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_smooth_wave_animation()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="Smooth Multi-Wave Animation",
+            animation_type="advanced_wave",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Smooth wave animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-particles', methods=['POST'])
+@jwt_required()
+def create_particle_animation():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_particle_system()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="Particle System Animation",
+            animation_type="particles",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Particle animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-3d-rotation', methods=['POST'])
+@jwt_required()
+def create_3d_animation():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_3d_rotation()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="3D Rotation Animation",
+            animation_type="3d_rotation",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': '3D rotation animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/animations/create-morphing', methods=['POST'])
+@jwt_required()
+def create_morphing_animation():
+    try:
+        user_id = get_jwt_identity()
+        filename = AnimationCreator.create_morphing_shapes()
+        
+        animation = Animation(
+            user_id=user_id,
+            title="Morphing Shapes Animation",
+            animation_type="morphing",
+            file_path=os.path.join(ANIMATION_FOLDER, filename)
+        )
+        db.session.add(animation)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Morphing animation created',
+            'animation_id': animation.id,
+            'filename': filename,
+            'url': f'/api/animations/view/{animation.id}'
+        })
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
