@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-6 fw-bold">Educational Blog</h1>
+            <p class="lead">Discover insights, tips, and knowledge from our educational community</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            {% if session.user_id %}
+            <a href="{{ url_for('blog_create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Write Blog Post
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <form method="GET" class="d-flex gap-2">
+                <input type="text" class="form-control" name="search" placeholder="Search blog posts..." 
+                       value="{{ search or '' }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <select class="form-select" onchange="window.location.href='{{ url_for('blog_list') }}?category=' + this.value">
+                <option value="">All Categories</option>
+                <option value="general" {{ 'selected' if category == 'general' }}>General</option>
+                <option value="technology" {{ 'selected' if category == 'technology' }}>Technology</option>
+                <option value="education" {{ 'selected' if category == 'education' }}>Education</option>
+                <option value="science" {{ 'selected' if category == 'science' }}>Science</option>
+                <option value="programming" {{ 'selected' if category == 'programming' }}>Programming</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Blog Posts -->
+    {% if blogs.items %}
+    <div class="row g-4">
+        {% for blog in blogs.items %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                {% if blog.featured_image %}
+                <img src="{{ url_for('static', filename='uploads/blog_images/' + blog.featured_image) }}" 
+                     class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ blog.title }}">
+                {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                    <i class="fas fa-blog fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        {% if blog.category %}
+                        <span class="badge bg-primary me-2">{{ blog.category.title() }}</span>
+                        {% endif %}
+                        <small class="text-muted">{{ blog.created_at.strftime('%B %d, %Y') }}</small>
+                    </div>
+                    
+                    <h5 class="card-title">{{ blog.title }}</h5>
+                    <p class="card-text">{{ blog.summary or (blog.content[:100] + '...' if blog.content|length > 100 else blog.content) }}</p>
+                    
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user me-1 text-muted"></i>
+                            <small class="text-muted">{{ blog.author.username }}</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <small class="text-muted">
+                                <i class="fas fa-eye me-1"></i>{{ blog.views }}
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-heart me-1"></i>{{ blog.likes }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('blog_view', id=blog.id) }}" class="btn btn-outline-primary w-100">
+                        Read More <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if blogs.pages > 1 %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Blog pagination">
+                <ul class="pagination justify-content-center">
+                    {% if blogs.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('blog_list', page=blogs.prev_num, category=category, search=search) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in blogs.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != blogs.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('blog_list', page=page_num, category=category, search=search) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if blogs.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('blog_list', page=blogs.next_num, category=category, search=search) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No blogs found -->
+    <div class="text-center py-5">
+        <i class="fas fa-blog fa-4x text-muted mb-3"></i>
+        <h3>No blog posts found</h3>
+        <p class="text-muted">
+            {% if search %}
+                No posts match your search criteria.
+            {% else %}
+                Be the first to share your knowledge!
+            {% endif %}
+        </p>
+        {% if session.user_id %}
+        <a href="{{ url_for('blog_create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Write First Post
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

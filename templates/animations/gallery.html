@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Animation Gallery - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-6 fw-bold">Animation Gallery</h1>
+            <p class="lead">Explore interactive animations and visualizations</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            {% if session.user_id %}
+            <a href="{{ url_for('animation_create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Animation
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Animation Type Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('animation_gallery') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if not selected_type else 'btn-outline-primary' }}">
+                    All Types
+                </a>
+                <a href="{{ url_for('animation_gallery', type='sine_wave') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_type == 'sine_wave' else 'btn-outline-primary' }}">
+                    Sine Wave
+                </a>
+                <a href="{{ url_for('animation_gallery', type='spiral') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_type == 'spiral' else 'btn-outline-primary' }}">
+                    Spiral
+                </a>
+                <a href="{{ url_for('animation_gallery', type='interference') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_type == 'interference' else 'btn-outline-primary' }}">
+                    Wave Interference
+                </a>
+                <a href="{{ url_for('animation_gallery', type='particles') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_type == 'particles' else 'btn-outline-primary' }}">
+                    Particle System
+                </a>
+                <a href="{{ url_for('animation_gallery', type='data_viz') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_type == 'data_viz' else 'btn-outline-primary' }}">
+                    Data Viz
+                </a>
+                <a href="{{ url_for('animation_gallery', type='banner') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_type == 'banner' else 'btn-outline-primary' }}">
+                    Banner
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animations Grid -->
+    {% if animations.items %}
+    <div class="row g-4">
+        {% for animation in animations.items %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-img-top position-relative" style="height: 200px; overflow: hidden;">
+                    {% if animation.file_path.endswith('.gif') %}
+                    <img src="{{ url_for('animation_view', id=animation.id) }}" 
+                         class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ animation.title }}">
+                    {% else %}
+                    <img src="{{ url_for('animation_view', id=animation.id) }}" 
+                         class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ animation.title }}">
+                    {% endif %}
+                    
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <span class="badge bg-dark bg-opacity-75">
+                            {% if animation.animation_type == 'sine_wave' %}
+                                <i class="fas fa-wave-square"></i>
+                            {% elif animation.animation_type == 'spiral' %}
+                                <i class="fas fa-spiral"></i>
+                            {% elif animation.animation_type == 'interference' %}
+                                <i class="fas fa-wave-square"></i>
+                            {% elif animation.animation_type == 'particles' %}
+                                <i class="fas fa-dot-circle"></i>
+                            {% elif animation.animation_type == 'data_viz' %}
+                                <i class="fas fa-chart-bar"></i>
+                            {% elif animation.animation_type == 'banner' %}
+                                <i class="fas fa-image"></i>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="position-absolute bottom-0 start-0 end-0 p-2 bg-dark bg-opacity-50 text-white">
+                        <small>{{ animation.animation_type.replace('_', ' ').title() }}</small>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <h6 class="card-title">{{ animation.title }}</h6>
+                    
+                    {% if animation.description %}
+                    <p class="card-text small">{{ animation.description[:80] + '...' if animation.description|length > 80 else animation.description }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex align-items-center justify-content-between">
+                        <small class="text-muted">
+                            <i class="fas fa-user me-1"></i>{{ animation.creator.username }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>{{ animation.views }}
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-sm flex-fill" onclick="viewAnimation({{ animation.id }})">
+                            <i class="fas fa-play me-1"></i>View
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="downloadAnimation({{ animation.id }})">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="shareAnimation({{ animation.id }})">
+                            <i class="fas fa-share"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if animations.pages > 1 %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Animation pagination">
+                <ul class="pagination justify-content-center">
+                    {% if animations.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('animation_gallery', page=animations.prev_num, type=selected_type) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in animations.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != animations.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('animation_gallery', page=page_num, type=selected_type) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if animations.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('animation_gallery', page=animations.next_num, type=selected_type) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No animations found -->
+    <div class="text-center py-5">
+        <i class="fas fa-magic fa-4x text-muted mb-3"></i>
+        <h3>No animations found</h3>
+        <p class="text-muted">
+            {% if selected_type %}
+                No {{ selected_type.replace('_', ' ') }} animations available yet.
+            {% else %}
+                No animations have been created yet.
+            {% endif %}
+        </p>
+        {% if session.user_id %}
+        <a href="{{ url_for('animation_create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create First Animation
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Animation Viewer Modal -->
+<div class="modal fade" id="animationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="animationModalTitle">Animation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="animationContent">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="downloadCurrentAnimation()">
+                    <i class="fas fa-download me-2"></i>Download
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentAnimationId = null;
+
+function viewAnimation(animationId) {
+    currentAnimationId = animationId;
+    const modal = new bootstrap.Modal(document.getElementById('animationModal'));
+    
+    // Set loading state
+    document.getElementById('animationContent').innerHTML = `
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    `;
+    
+    // Load animation
+    const animationUrl = `/animation/view/${animationId}`;
+    document.getElementById('animationContent').innerHTML = `
+        <img src="${animationUrl}" class="img-fluid" style="max-width: 100%; height: auto;" alt="Animation">
+    `;
+    
+    modal.show();
+}
+
+function downloadAnimation(animationId) {
+    window.open(`/animation/view/${animationId}`, '_blank');
+}
+
+function shareAnimation(animationId) {
+    const shareUrl = `${window.location.origin}/animation/view/${animationId}`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Check out this animation!',
+            url: shareUrl
+        });
+    } else {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            alert('Animation link copied to clipboard!');
+        });
+    }
+}
+
+function downloadCurrentAnimation() {
+    if (currentAnimationId) {
+        downloadAnimation(currentAnimationId);
+    }
+}
+
+// Auto-refresh GIF animations every 10 seconds to ensure they loop
+setInterval(() => {
+    const gifImages = document.querySelectorAll('img[src*="animation/view"]');
+    gifImages.forEach(img => {
+        const src = img.src;
+        img.src = '';
+        img.src = src + '?t=' + Date.now();
+    });
+}, 10000);
+</script>
+{% endblock %}

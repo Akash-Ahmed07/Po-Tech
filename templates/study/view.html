@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}{{ material.title }} - Po-Tech Study Materials{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Material Content -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <!-- Back button -->
+                    <div class="mb-3">
+                        <a href="{{ url_for('study_materials', level=material.level) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-2"></i>Back to {{ material.level.upper() }} Materials
+                        </a>
+                    </div>
+                    
+                    <!-- Material Header -->
+                    <div class="d-flex align-items-start justify-content-between mb-4">
+                        <div>
+                            <h1 class="display-6 fw-bold">{{ material.title }}</h1>
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="badge bg-primary">{{ material.subject }}</span>
+                                <span class="badge bg-secondary">{{ material.level.upper() }}</span>
+                                {% if material.difficulty %}
+                                <span class="badge bg-{{ 'success' if material.difficulty == 'easy' else 'warning' if material.difficulty == 'medium' else 'danger' }}">
+                                    {{ material.difficulty.title() }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>{{ material.views }} views
+                        </small>
+                    </div>
+                    
+                    <!-- Material Info -->
+                    <div class="row mb-4">
+                        {% if material.chapter %}
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Chapter</h6>
+                            <p>{{ material.chapter }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if material.topic %}
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Topic</h6>
+                            <p>{{ material.topic }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Video Section -->
+                    {% if material.video_url %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-video me-2"></i>Video Lesson
+                        </h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="{{ material.video_url }}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Description -->
+                    {% if material.description %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Description</h5>
+                        <div class="bg-light p-3 rounded">
+                            {{ material.description|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- PDF Section -->
+                    {% if material.pdf_path %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-file-pdf me-2"></i>Study Material PDF
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" onclick="viewPDF()">
+                                <i class="fas fa-eye me-2"></i>View PDF
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="downloadPDF()">
+                                <i class="fas fa-download me-2"></i>Download PDF
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Study Tips -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Study Tips</h6>
+                        <ul class="mb-0">
+                            <li>Take notes while watching the video</li>
+                            <li>Practice problems related to this topic</li>
+                            <li>Review the material regularly</li>
+                            <li>Ask questions if you don't understand</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Material Info Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Material Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Level</small>
+                            <p class="fw-bold">{{ material.level.upper() }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Subject</small>
+                            <p class="fw-bold">{{ material.subject }}</p>
+                        </div>
+                        {% if material.difficulty %}
+                        <div class="col-6">
+                            <small class="text-muted">Difficulty</small>
+                            <p class="fw-bold">{{ material.difficulty.title() }}</p>
+                        </div>
+                        {% endif %}
+                        <div class="col-6">
+                            <small class="text-muted">Views</small>
+                            <p class="fw-bold">{{ material.views }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <small class="text-muted">Created</small>
+                        <p class="fw-bold">{{ material.created_at.strftime('%B %d, %Y') }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Related Materials -->
+            {% if related %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-book me-2"></i>Related Materials</h6>
+                </div>
+                <div class="card-body">
+                    {% for related_material in related %}
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="me-3">
+                            <div class="bg-primary text-white rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">
+                                <a href="{{ url_for('study_view', id=related_material.id) }}" class="text-decoration-none">
+                                    {{ related_material.title }}
+                                </a>
+                            </h6>
+                            <small class="text-muted">{{ related_material.subject }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-tools me-2"></i>Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="bookmarkMaterial()">
+                            <i class="fas fa-bookmark me-2"></i>Bookmark
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="shareMaterial()">
+                            <i class="fas fa-share me-2"></i>Share
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="reportIssue()">
+                            <i class="fas fa-flag me-2"></i>Report Issue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PDF Viewer Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ material.title }} - PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="pdfFrame" src="" style="width: 100%; height: 600px;" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewPDF() {
+    {% if material.pdf_path %}
+    const modal = new bootstrap.Modal(document.getElementById('pdfModal'));
+    document.getElementById('pdfFrame').src = '{{ url_for("static", filename="uploads/pdfs/" + material.pdf_path) }}';
+    modal.show();
+    {% endif %}
+}
+
+function downloadPDF() {
+    {% if material.pdf_path %}
+    window.open('{{ url_for("static", filename="uploads/pdfs/" + material.pdf_path) }}', '_blank');
+    {% endif %}
+}
+
+function bookmarkMaterial() {
+    // Implementation for bookmarking
+    alert('Bookmark functionality would be implemented here');
+}
+
+function shareMaterial() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ material.title }}',
+            text: '{{ material.description[:100] }}',
+            url: window.location.href
+        });
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard!');
+        });
+    }
+}
+
+function reportIssue() {
+    // Implementation for reporting issues
+    alert('Report functionality would be implemented here');
+}
+</script>
+{% endblock %}

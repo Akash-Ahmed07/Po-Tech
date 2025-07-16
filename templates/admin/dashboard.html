@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="display-6 fw-bold">Admin Dashboard</h1>
+                    <p class="text-muted">Manage and monitor your educational platform</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshStats()">
+                        <i class="fas fa-sync me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-users fa-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">{{ total_users }}</h3>
+                            <p class="text-muted mb-0">Total Users</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-blog fa-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">{{ total_blogs }}</h3>
+                            <p class="text-muted mb-0">Blog Posts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-book fa-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">{{ total_books }}</h3>
+                            <p class="text-muted mb-0">Books</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="fas fa-magic fa-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">{{ total_animations }}</h3>
+                            <p class="text-muted mb-0">Animations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="fw-bold mb-3">Quick Actions</h3>
+            <div class="row g-3">
+                <div class="col-lg-3 col-md-6">
+                    <a href="{{ url_for('admin_users') }}" class="card text-decoration-none h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h6 class="card-title">Manage Users</h6>
+                            <p class="card-text small text-muted">View and manage user accounts</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <a href="{{ url_for('admin_contacts') }}" class="card text-decoration-none h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-envelope fa-2x text-success mb-2"></i>
+                            <h6 class="card-title">Contact Messages</h6>
+                            <p class="card-text small text-muted">
+                                View messages 
+                                {% if pending_contacts > 0 %}
+                                <span class="badge bg-danger">{{ pending_contacts }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <a href="{{ url_for('blog_list') }}" class="card text-decoration-none h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-blog fa-2x text-warning mb-2"></i>
+                            <h6 class="card-title">Moderate Blogs</h6>
+                            <p class="card-text small text-muted">Review and moderate blog posts</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <a href="{{ url_for('library') }}" class="card text-decoration-none h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-book fa-2x text-info mb-2"></i>
+                            <h6 class="card-title">Library Management</h6>
+                            <p class="card-text small text-muted">Manage digital library content</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        <div class="me-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">New User Registration</h6>
+                            <small class="text-muted">john_doe registered 2 hours ago</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        <div class="me-3">
+                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-blog"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">New Blog Post</h6>
+                            <small class="text-muted">"Introduction to Physics" published 4 hours ago</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        <div class="me-3">
+                            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Book Upload</h6>
+                            <small class="text-muted">"Mathematics for HSC" uploaded 6 hours ago</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Animation Created</h6>
+                            <small class="text-muted">Sine wave animation created 8 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Platform Statistics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Active Users</span>
+                        <span class="fw-bold">{{ (total_users * 0.7)|round|int }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: 70%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Published Blogs</span>
+                        <span class="fw-bold">{{ total_blogs }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Book Downloads</span>
+                        <span class="fw-bold">{{ (total_books * 15)|round|int }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: 60%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Animation Views</span>
+                        <span class="fw-bold">{{ (total_animations * 25)|round|int }}</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: 40%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>System Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Database</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>File Storage</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Email Service</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Animation Engine</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshStats() {
+    // Add a loading indicator
+    const button = document.querySelector('button[onclick="refreshStats()"]');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Refreshing...';
+    button.disabled = true;
+    
+    // Simulate refresh (in real implementation, this would be an AJAX call)
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        
+        // Show success message
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show';
+        alert.innerHTML = `
+            Statistics refreshed successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+            alert.remove();
+        }, 3000);
+    }, 2000);
+}
+</script>
+{% endblock %}

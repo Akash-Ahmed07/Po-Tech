@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Digital Library - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-6 fw-bold">Digital Library</h1>
+            <p class="lead">Access thousands of educational books and resources</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            {% if session.user_id %}
+            <a href="{{ url_for('library_upload') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Upload Book
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <form method="GET" class="d-flex gap-2">
+                <input type="text" class="form-control" name="search" placeholder="Search books by title or author..." 
+                       value="{{ search or '' }}">
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <form method="GET">
+                <input type="hidden" name="search" value="{{ search or '' }}">
+                <select class="form-select" name="category" onchange="this.form.submit()">
+                    <option value="all" {{ 'selected' if selected_category == 'all' }}>All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}" {{ 'selected' if selected_category == category }}>
+                        {{ category.replace('_', ' ').title() }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Pills -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('library', category='all') }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_category == 'all' else 'btn-outline-primary' }}">
+                    All Books
+                </a>
+                {% for category in categories %}
+                <a href="{{ url_for('library', category=category) }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_category == category else 'btn-outline-primary' }}">
+                    {{ category.replace('_', ' ').title() }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    {% if books.items %}
+    <div class="row g-4">
+        {% for book in books.items %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card h-100 border-0 shadow-sm">
+                {% if book.cover_image %}
+                <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
+                     class="card-img-top" style="height: 300px; object-fit: cover;" alt="{{ book.title }}">
+                {% else %}
+                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 300px;">
+                    <i class="fas fa-book fa-4x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h6 class="card-title">{{ book.title }}</h6>
+                    <p class="card-text text-muted small">{{ book.author }}</p>
+                    
+                    {% if book.subject %}
+                    <div class="mb-2">
+                        <span class="badge bg-secondary">{{ book.subject }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if book.description %}
+                    <p class="card-text small">{{ book.description[:100] + '...' if book.description|length > 100 else book.description }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex align-items-center justify-content-between text-muted small">
+                        <span>
+                            <i class="fas fa-download me-1"></i>{{ book.downloads }}
+                        </span>
+                        {% if book.file_size %}
+                        <span>{{ (book.file_size / 1024 / 1024) | round(1) }} MB</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex gap-2">
+                        {% if book.file_path %}
+                        <a href="{{ url_for('download_book', id=book.id) }}" class="btn btn-primary btn-sm flex-fill">
+                            <i class="fas fa-download me-1"></i>Download
+                        </a>
+                        {% endif %}
+                        <button class="btn btn-outline-info btn-sm" onclick="showBookDetails({{ book.id }})">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if books.pages > 1 %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Books pagination">
+                <ul class="pagination justify-content-center">
+                    {% if books.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('library', page=books.prev_num, category=selected_category, search=search) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in books.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != books.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('library', page=page_num, category=selected_category, search=search) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if books.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('library', page=books.next_num, category=selected_category, search=search) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No books found -->
+    <div class="text-center py-5">
+        <i class="fas fa-book fa-4x text-muted mb-3"></i>
+        <h3>No books found</h3>
+        <p class="text-muted">
+            {% if search %}
+                No books match your search criteria.
+            {% else %}
+                No books available in this category.
+            {% endif %}
+        </p>
+        {% if session.user_id %}
+        <a href="{{ url_for('library_upload') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Upload First Book
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Book Details Modal -->
+<div class="modal fade" id="bookDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="bookDetailsContent">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showBookDetails(bookId) {
+    const modal = new bootstrap.Modal(document.getElementById('bookDetailsModal'));
+    modal.show();
+    
+    // In a real implementation, you would fetch book details via AJAX
+    // For now, we'll show a placeholder
+    document.getElementById('bookDetailsContent').innerHTML = `
+        <div class="text-center">
+            <p>Book details functionality would be implemented here.</p>
+            <p>Book ID: ${bookId}</p>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

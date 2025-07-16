@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Po-Tech{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Get in Touch</h1>
+                <p class="lead mb-0">Have questions or need assistance? We're here to help you on your educational journey.</p>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-envelope" style="font-size: 8rem; opacity: 0.2;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form and Info -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-4">Send us a Message</h3>
+                        
+                        <form method="POST" action="{{ url_for('contact') }}">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <div class="invalid-feedback">
+                                        Please provide your full name.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid email address.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject</label>
+                                <select class="form-select" id="subject" name="subject">
+                                    <option value="">Select a subject (optional)</option>
+                                    <option value="General Inquiry">General Inquiry</option>
+                                    <option value="Technical Support">Technical Support</option>
+                                    <option value="Account Issues">Account Issues</option>
+                                    <option value="Content Request">Content Request</option>
+                                    <option value="Bug Report">Bug Report</option>
+                                    <option value="Feature Request">Feature Request</option>
+                                    <option value="Partnership">Partnership</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="6" 
+                                          placeholder="Please describe your inquiry in detail..." required></textarea>
+                                <div class="invalid-feedback">
+                                    Please provide a message.
+                                </div>
+                                <small class="text-muted">Minimum 10 characters required</small>
+                            </div>
+                            
+                            <!-- Honeypot field for spam protection -->
+                            <div class="d-none">
+                                <input type="text" name="honeypot" tabindex="-1" autocomplete="off">
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="privacy" required>
+                                <label class="form-check-label" for="privacy">
+                                    I agree to the <a href="#" class="text-decoration-none">Privacy Policy</a> and 
+                                    <a href="#" class="text-decoration-none">Terms of Service</a> *
+                                </label>
+                                <div class="invalid-feedback">
+                                    You must agree to the privacy policy and terms of service.
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <!-- Contact Info Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>Contact Information
+                        </h5>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Email</h6>
+                                <small class="text-muted">support@potech.edu</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Phone</h6>
+                                <small class="text-muted">+880 1XXX-XXXXXX</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Office Hours</h6>
+                                <small class="text-muted">9:00 AM - 6:00 PM (GMT+6)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Location</h6>
+                                <small class="text-muted">Dhaka, Bangladesh</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Response Time Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-clock me-2 text-success"></i>Response Time
+                        </h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <strong>General Inquiries:</strong> Within 24 hours
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <strong>Technical Support:</strong> Within 12 hours
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <strong>Account Issues:</strong> Within 6 hours
+                            </li>
+                            <li>
+                                <i class="fas fa-check text-success me-2"></i>
+                                <strong>Emergency:</strong> Within 2 hours
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- FAQ Link Card -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <i class="fas fa-question-circle fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold mb-2">Need Quick Answers?</h5>
+                        <p class="text-muted mb-3">Check our FAQ section for commonly asked questions and instant solutions.</p>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-2"></i>View FAQ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Other Contact Methods -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Other Ways to Reach Us</h2>
+            <p class="lead">Connect with us through your preferred platform</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm text-center h-100">
+                    <div class="card-body">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 60px; height: 60px;">
+                            <i class="fab fa-facebook-f fa-lg"></i>
+                        </div>
+                        <h5 class="card-title">Facebook</h5>
+                        <p class="card-text">Follow us for updates and community discussions</p>
+                        <a href="#" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-facebook-f me-1"></i>Follow
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm text-center h-100">
+                    <div class="card-body">
+                        <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 60px; height: 60px;">
+                            <i class="fab fa-twitter fa-lg"></i>
+                        </div>
+                        <h5 class="card-title">Twitter</h5>
+                        <p class="card-text">Get quick updates and announcements</p>
+                        <a href="#" class="btn btn-outline-info btn-sm">
+                            <i class="fab fa-twitter me-1"></i>Follow
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm text-center h-100">
+                    <div class="card-body">
+                        <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 60px; height: 60px;">
+                            <i class="fab fa-youtube fa-lg"></i>
+                        </div>
+                        <h5 class="card-title">YouTube</h5>
+                        <p class="card-text">Watch educational videos and tutorials</p>
+                        <a href="#" class="btn btn-outline-danger btn-sm">
+                            <i class="fab fa-youtube me-1"></i>Subscribe
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm text-center h-100">
+                    <div class="card-body">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 60px; height: 60px;">
+                            <i class="fab fa-whatsapp fa-lg"></i>
+                        </div>
+                        <h5 class="card-title">WhatsApp</h5>
+                        <p class="card-text">Quick support and instant messaging</p>
+                        <a href="#" class="btn btn-outline-success btn-sm">
+                            <i class="fab fa-whatsapp me-1"></i>Message
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Form validation enhancement
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.querySelector('form');
+    const messageField = document.getElementById('message');
+    
+    // Message length validation
+    messageField.addEventListener('input', function() {
+        const minLength = 10;
+        const currentLength = this.value.length;
+        const feedback = this.nextElementSibling;
+        
+        if (currentLength < minLength && currentLength > 0) {
+            this.classList.add('is-invalid');
+            if (feedback) {
+                feedback.textContent = `Message must be at least ${minLength} characters. Current: ${currentLength}`;
+            }
+        } else if (currentLength >= minLength) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+    
+    // Form submission handling
+    contactForm.addEventListener('submit', function(e) {
+        // Check honeypot field
+        const honeypot = document.querySelector('input[name="honeypot"]');
+        if (honeypot && honeypot.value !== '') {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+        
+        // Reset button after 3 seconds if form doesn't redirect
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }, 3000);
+    });
+});
+</script>
+{% endblock %}

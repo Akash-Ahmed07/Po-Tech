@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Create Animation - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="display-6 fw-bold">Create Animation</h1>
+                    <p class="text-muted">Generate educational animations and visualizations</p>
+                </div>
+                <a href="{{ url_for('animation_gallery') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Gallery
+                </a>
+            </div>
+
+            <!-- Animation Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" id="animationForm">
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">Animation Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" required maxlength="255">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="animation_type" class="form-label fw-bold">Animation Type *</label>
+                            <select class="form-select" id="animation_type" name="animation_type" required onchange="updateAnimationOptions()">
+                                <option value="">Select Animation Type</option>
+                                <option value="sine_wave">Sine Wave</option>
+                                <option value="spiral">Spiral</option>
+                                <option value="interference">Wave Interference</option>
+                                <option value="particles">Particle System</option>
+                                <option value="data_viz">Data Visualization</option>
+                                <option value="banner">Educational Banner</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" 
+                                      placeholder="Brief description of your animation..."></textarea>
+                        </div>
+
+                        <!-- Animation-specific options -->
+                        <div id="animationOptions" class="mb-4" style="display: none;">
+                            <!-- Data Visualization Options -->
+                            <div id="dataVizOptions" style="display: none;">
+                                <label for="data_points" class="form-label fw-bold">Data Points</label>
+                                <input type="text" class="form-control" id="data_points" name="data_points" 
+                                       placeholder="85,92,78,88,90" value="85,92,78,88,90">
+                                <small class="text-muted">Comma-separated values for the chart</small>
+                            </div>
+
+                            <!-- Banner Options -->
+                            <div id="bannerOptions" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="banner_title" class="form-label fw-bold">Banner Title</label>
+                                        <input type="text" class="form-control" id="banner_title" name="banner_title" 
+                                               placeholder="Po-Tech Education">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="subtitle" class="form-label fw-bold">Subtitle</label>
+                                        <input type="text" class="form-control" id="subtitle" name="subtitle" 
+                                               placeholder="Learning Made Easy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Animation Preview -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Animation Preview</h6>
+                            <div class="border rounded p-4 text-center" id="animationPreview">
+                                <i class="fas fa-magic fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Select an animation type to see a preview</p>
+                            </div>
+                        </div>
+
+                        <!-- Generation Progress -->
+                        <div class="mb-4" id="generationProgress" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: 100%"></div>
+                            </div>
+                            <p class="text-center mt-2 text-muted">
+                                <i class="fas fa-cog fa-spin me-2"></i>Generating animation...
+                            </p>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Generate Animation
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-lg" onclick="previewAnimation()">
+                                <i class="fas fa-eye me-2"></i>Preview
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-undo me-2"></i>Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Animation Types Guide -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Animation Types Guide</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-wave-square fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6>Sine Wave</h6>
+                                    <p class="small text-muted">Smooth sine wave animation perfect for physics demonstrations</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-spiral fa-2x text-success"></i>
+                                </div>
+                                <div>
+                                    <h6>Spiral</h6>
+                                    <p class="small text-muted">Rotating spiral animation for geometry lessons</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-wave-square fa-2x text-warning"></i>
+                                </div>
+                                <div>
+                                    <h6>Wave Interference</h6>
+                                    <p class="small text-muted">Demonstrate wave interference patterns</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-dot-circle fa-2x text-info"></i>
+                                </div>
+                                <div>
+                                    <h6>Particle System</h6>
+                                    <p class="small text-muted">Animated particle system for physics simulations</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-chart-bar fa-2x text-danger"></i>
+                                </div>
+                                <div>
+                                    <h6>Data Visualization</h6>
+                                    <p class="small text-muted">Create charts and graphs from your data</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-image fa-2x text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h6>Educational Banner</h6>
+                                    <p class="small text-muted">Generate professional educational banners</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateAnimationOptions() {
+    const animationType = document.getElementById('animation_type').value;
+    const optionsDiv = document.getElementById('animationOptions');
+    const dataVizOptions = document.getElementById('dataVizOptions');
+    const bannerOptions = document.getElementById('bannerOptions');
+    
+    // Hide all options first
+    optionsDiv.style.display = 'none';
+    dataVizOptions.style.display = 'none';
+    bannerOptions.style.display = 'none';
+    
+    // Show relevant options
+    if (animationType === 'data_viz') {
+        optionsDiv.style.display = 'block';
+        dataVizOptions.style.display = 'block';
+    } else if (animationType === 'banner') {
+        optionsDiv.style.display = 'block';
+        bannerOptions.style.display = 'block';
+    }
+    
+    updatePreview();
+}
+
+function updatePreview() {
+    const animationType = document.getElementById('animation_type').value;
+    const preview = document.getElementById('animationPreview');
+    
+    const previewContent = {
+        'sine_wave': '<i class="fas fa-wave-square fa-4x text-primary mb-3"></i><p class="text-muted">Smooth sine wave animation</p>',
+        'spiral': '<i class="fas fa-spiral fa-4x text-success mb-3"></i><p class="text-muted">Rotating spiral animation</p>',
+        'interference': '<i class="fas fa-wave-square fa-4x text-warning mb-3"></i><p class="text-muted">Wave interference pattern</p>',
+        'particles': '<i class="fas fa-dot-circle fa-4x text-info mb-3"></i><p class="text-muted">Animated particle system</p>',
+        'data_viz': '<i class="fas fa-chart-bar fa-4x text-danger mb-3"></i><p class="text-muted">Data visualization chart</p>',
+        'banner': '<i class="fas fa-image fa-4x text-secondary mb-3"></i><p class="text-muted">Educational banner</p>'
+    };
+    
+    if (animationType && previewContent[animationType]) {
+        preview.innerHTML = previewContent[animationType];
+    } else {
+        preview.innerHTML = '<i class="fas fa-magic fa-3x text-muted mb-3"></i><p class="text-muted">Select an animation type to see a preview</p>';
+    }
+}
+
+function previewAnimation() {
+    const animationType = document.getElementById('animation_type').value;
+    const title = document.getElementById('title').value;
+    
+    if (!animationType) {
+        alert('Please select an animation type first.');
+        return;
+    }
+    
+    alert(`Preview for ${animationType} animation: "${title || 'Untitled Animation'}"`);
+}
+
+// Form submission with progress indicator
+document.getElementById('animationForm').addEventListener('submit', function(e) {
+    const animationType = document.getElementById('animation_type').value;
+    if (!animationType) {
+        e.preventDefault();
+        alert('Please select an animation type.');
+        return;
+    }
+    
+    // Show progress indicator
+    document.getElementById('generationProgress').style.display = 'block';
+    
+    // Simulate some delay for animation generation
+    setTimeout(() => {
+        // Form will be submitted normally
+    }, 1000);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Book - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="display-6 fw-bold">Upload Book</h1>
+                    <p class="text-muted">Share educational resources with the community</p>
+                </div>
+                <a href="{{ url_for('library') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Library
+                </a>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <label for="title" class="form-label fw-bold">Book Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" required maxlength="255">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="category" class="form-label fw-bold">Category *</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category }}">{{ category.replace('_', ' ').title() }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="author" class="form-label fw-bold">Author *</label>
+                                <input type="text" class="form-control" id="author" name="author" required maxlength="255">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subject" class="form-label fw-bold">Subject</label>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="e.g., Physics, Mathematics" maxlength="100">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" 
+                                      placeholder="Brief description of the book content..."></textarea>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="book_file" class="form-label fw-bold">Book File (PDF) *</label>
+                                <input type="file" class="form-control" id="book_file" name="book_file" 
+                                       accept=".pdf" required>
+                                <small class="text-muted">Upload the PDF file of the book</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cover_image" class="form-label fw-bold">Cover Image</label>
+                                <input type="file" class="form-control" id="cover_image" name="cover_image" 
+                                       accept="image/*">
+                                <small class="text-muted">Optional: Upload a cover image</small>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Progress -->
+                        <div class="mb-4" id="uploadProgress" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted">Uploading files...</small>
+                        </div>
+
+                        <!-- Preview Section -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Preview</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="border rounded p-3 text-center" id="coverPreview">
+                                        <i class="fas fa-book fa-3x text-muted"></i>
+                                        <p class="mt-2 mb-0 small text-muted">No cover image</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="border rounded p-3">
+                                        <h6 id="titlePreview" class="text-muted">Book Title</h6>
+                                        <p id="authorPreview" class="text-muted small">Author Name</p>
+                                        <p id="descriptionPreview" class="text-muted small">Book description will appear here...</p>
+                                        <div id="categoryPreview"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guidelines -->
+                        <div class="alert alert-info mb-4">
+                            <h6><i class="fas fa-info-circle me-2"></i>Upload Guidelines</h6>
+                            <ul class="mb-0">
+                                <li>Only PDF files are accepted for books</li>
+                                <li>Maximum file size: 50MB</li>
+                                <li>Make sure you have the right to share this content</li>
+                                <li>Provide accurate information about the book</li>
+                                <li>Use appropriate categories for better discoverability</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-upload me-2"></i>Upload Book
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-undo me-2"></i>Reset Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form preview functionality
+document.getElementById('title').addEventListener('input', function() {
+    document.getElementById('titlePreview').textContent = this.value || 'Book Title';
+});
+
+document.getElementById('author').addEventListener('input', function() {
+    document.getElementById('authorPreview').textContent = this.value || 'Author Name';
+});
+
+document.getElementById('description').addEventListener('input', function() {
+    document.getElementById('descriptionPreview').textContent = this.value || 'Book description will appear here...';
+});
+
+document.getElementById('category').addEventListener('change', function() {
+    const preview = document.getElementById('categoryPreview');
+    if (this.value) {
+        preview.innerHTML = `<span class="badge bg-primary">${this.value.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>`;
+    } else {
+        preview.innerHTML = '';
+    }
+});
+
+// Cover image preview
+document.getElementById('cover_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('coverPreview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Cover" style="max-width: 100%; height: auto; border-radius: 4px;">`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '<i class="fas fa-book fa-3x text-muted"></i><p class="mt-2 mb-0 small text-muted">No cover image</p>';
+    }
+});
+
+// File size validation
+document.getElementById('book_file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const maxSize = 50 * 1024 * 1024; // 50MB
+        if (file.size > maxSize) {
+            alert('File size exceeds 50MB limit. Please choose a smaller file.');
+            this.value = '';
+        }
+    }
+});
+
+// Form submission with progress
+document.querySelector('form').addEventListener('submit', function(e) {
+    const bookFile = document.getElementById('book_file').files[0];
+    if (bookFile) {
+        document.getElementById('uploadProgress').style.display = 'block';
+        
+        // Simulate progress (in real implementation, you'd use actual upload progress)
+        let progress = 0;
+        const progressBar = document.querySelector('.progress-bar');
+        const interval = setInterval(() => {
+            progress += 10;
+            progressBar.style.width = progress + '%';
+            if (progress >= 100) {
+                clearInterval(interval);
+            }
+        }, 200);
+    }
+});
+</script>
+{% endblock %}

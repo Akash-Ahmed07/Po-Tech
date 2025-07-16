@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}{{ level.upper() }} Study Materials - Po-Tech{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-6 fw-bold">{{ level.upper() }} Study Materials</h1>
+            <p class="lead">Comprehensive study resources for {{ level.upper() }} students</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('study_materials', level='ssc') }}" 
+                   class="btn {{ 'btn-primary' if level == 'ssc' else 'btn-outline-primary' }}">SSC</a>
+                <a href="{{ url_for('study_materials', level='hsc') }}" 
+                   class="btn {{ 'btn-primary' if level == 'hsc' else 'btn-outline-primary' }}">HSC</a>
+                <a href="{{ url_for('study_materials', level='undergraduate') }}" 
+                   class="btn {{ 'btn-primary' if level == 'undergraduate' else 'btn-outline-primary' }}">Undergraduate</a>
+                <a href="{{ url_for('study_materials', level='masters') }}" 
+                   class="btn {{ 'btn-primary' if level == 'masters' else 'btn-outline-primary' }}">Masters</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Filter -->
+    {% if subjects %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('study_materials', level=level) }}" 
+                   class="btn btn-sm {{ 'btn-primary' if not selected_subject else 'btn-outline-primary' }}">
+                    All Subjects
+                </a>
+                {% for subject in subjects %}
+                <a href="{{ url_for('study_materials', level=level, subject=subject) }}" 
+                   class="btn btn-sm {{ 'btn-primary' if selected_subject == subject else 'btn-outline-primary' }}">
+                    {{ subject }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Study Materials -->
+    {% if materials.items %}
+    <div class="row g-4">
+        {% for material in materials.items %}
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div>
+                            <h5 class="card-title">{{ material.title }}</h5>
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="badge bg-primary">{{ material.subject }}</span>
+                                {% if material.difficulty %}
+                                <span class="badge bg-{{ 'success' if material.difficulty == 'easy' else 'warning' if material.difficulty == 'medium' else 'danger' }}">
+                                    {{ material.difficulty.title() }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>{{ material.views }}
+                        </small>
+                    </div>
+                    
+                    {% if material.chapter %}
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-book me-1"></i>Chapter: {{ material.chapter }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if material.topic %}
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-lightbulb me-1"></i>Topic: {{ material.topic }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if material.description %}
+                    <p class="card-text">{{ material.description[:150] + '...' if material.description|length > 150 else material.description }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex align-items-center justify-content-between">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>{{ material.created_at.strftime('%B %d, %Y') }}
+                        </small>
+                        <div class="d-flex gap-2">
+                            {% if material.video_url %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-video me-1"></i>Video
+                            </span>
+                            {% endif %}
+                            {% if material.pdf_path %}
+                            <span class="badge bg-info">
+                                <i class="fas fa-file-pdf me-1"></i>PDF
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('study_view', id=material.id) }}" class="btn btn-primary btn-sm flex-fill">
+                            <i class="fas fa-eye me-1"></i>View Material
+                        </a>
+                        {% if material.video_url %}
+                        <button class="btn btn-outline-success btn-sm" onclick="openVideo('{{ material.video_url }}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        {% endif %}
+                        {% if material.pdf_path %}
+                        <button class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if materials.pages > 1 %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Study materials pagination">
+                <ul class="pagination justify-content-center">
+                    {% if materials.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('study_materials', level=level, page=materials.prev_num, subject=selected_subject) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in materials.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != materials.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('study_materials', level=level, page=page_num, subject=selected_subject) }}">{{ page_num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if materials.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('study_materials', level=level, page=materials.next_num, subject=selected_subject) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No materials found -->
+    <div class="text-center py-5">
+        <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
+        <h3>No study materials found</h3>
+        <p class="text-muted">
+            {% if selected_subject %}
+                No materials available for {{ selected_subject }} in {{ level.upper() }}.
+            {% else %}
+                No study materials available for {{ level.upper() }} yet.
+            {% endif %}
+        </p>
+        <a href="{{ url_for('contact') }}" class="btn btn-primary">
+            <i class="fas fa-envelope me-2"></i>Request Materials
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Video Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Video Lesson</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="ratio ratio-16x9">
+                    <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openVideo(videoUrl) {
+    const modal = new bootstrap.Modal(document.getElementById('videoModal'));
+    document.getElementById('videoFrame').src = videoUrl;
+    modal.show();
+    
+    // Clear video when modal is closed
+    document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('videoFrame').src = '';
+    });
+}
+</script>
+{% endblock %}
