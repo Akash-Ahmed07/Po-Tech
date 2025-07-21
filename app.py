@@ -37,13 +37,14 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = os.environ.get("JWT_SECRET_KEY", "jwt-secret-string")
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
     
-    # Mail Configuration
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    # Mail Configuration - Disabled for development
+    app.config['MAIL_SERVER'] = None  # Disable email for development
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = os.environ.get("EMAIL_USERNAME", "groweasy25@gmail.com")
-    app.config['MAIL_PASSWORD'] = os.environ.get("EMAIL_PASSWORD")
-    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("EMAIL_USERNAME", "groweasy25@gmail.com")
+    app.config['MAIL_USERNAME'] = None
+    app.config['MAIL_PASSWORD'] = None
+    app.config['MAIL_DEFAULT_SENDER'] = "noreply@potech.edu"
+    app.config['MAIL_SUPPRESS_SEND'] = True  # Suppress sending emails in development
     
     # File Upload Configuration
     app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
