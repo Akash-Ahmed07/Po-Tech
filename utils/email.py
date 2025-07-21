@@ -5,6 +5,13 @@ import os
 def send_verification_email(email, token):
     """Send email verification link"""
     try:
+        # Skip email sending in development mode
+        from flask import current_app
+        if current_app.config.get('MAIL_SUPPRESS_SEND', False) or not current_app.config.get('MAIL_SERVER'):
+            print(f"Email sending disabled - Verification email would be sent to: {email}")
+            print(f"Verification token: {token}")
+            return True
+            
         msg = Message(
             'Verify Your Email - Po-Tech',
             recipients=[email]
@@ -47,6 +54,13 @@ def send_verification_email(email, token):
 def send_contact_notification(contact_data):
     """Send notification when contact form is submitted"""
     try:
+        # Skip email sending in development mode
+        from flask import current_app
+        if current_app.config.get('MAIL_SUPPRESS_SEND', False) or not current_app.config.get('MAIL_SERVER'):
+            print(f"Email sending disabled - Contact notification would be sent")
+            print(f"Contact data: {contact_data}")
+            return True
+            
         msg = Message(
             f'New Contact Message: {contact_data["subject"]}',
             recipients=[os.environ.get("EMAIL_USERNAME", "groweasy25@gmail.com")]
